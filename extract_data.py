@@ -4,10 +4,10 @@ from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
 today = datetime.now()
-three_months_ago = today - relativedelta(months=1) # as almost 3 month lag
+three_months_ago = today - relativedelta(months=2) # as almost 3 month lag
 
-year = three_months_ago.year
-month = three_months_ago.month
+year = three_months_ago.strftime("%Y")
+month = three_months_ago.strftime("%m")
 
 filename = f"yellow_tripdata_{year}-{month}.parquet"
 url = f"https://d37ci6vzurychx.cloudfront.net/trip-data/{filename}"
