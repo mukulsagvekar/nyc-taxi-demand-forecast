@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: raw
+    database: nyctaxi
+    schema: raw
+    tables:
+      - name: trips
+        description: "This table contains raw trip data as a variant"
