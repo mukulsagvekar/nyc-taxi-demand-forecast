@@ -1,6 +1,4 @@
 streamlit
-snowflake-connector-python
 pandas
-numpy
-pydeck
-altair
+plotly
+snowflake-connector-python
