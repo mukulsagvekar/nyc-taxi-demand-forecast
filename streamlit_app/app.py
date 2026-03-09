@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import snowflake.connector
 import plotly.express as px
+from pathlib import Path
 import json
 
 st.set_page_config(layout="wide")
@@ -120,7 +121,11 @@ zone_demand = (
 # Load GeoJSON
 # -----------------------------
 # link to download geojson file - https://earthworks.stanford.edu/catalog/nyu-2451-36743
-with open("nyc_taxi_zones.geojson") as f:
+
+BASE_DIR = Path(__file__).resolve().parent
+geo_path = BASE_DIR / "nyc_taxi_zones.geojson"
+
+with open(geo_path) as f:
     geojson = json.load(f)
 
 # -----------------------------
