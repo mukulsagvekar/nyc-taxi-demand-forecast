@@ -10,8 +10,8 @@ grant operate on warehouse compute_wh to role transform;
 
 -- 4. create dbt user and assign to transform role
 create user if not exists dbt
-  password = 'dbt@6598'
-  login_name = 'dbt'
+  password = ''
+  login_name = ''
   must_change_password = false
   default_warehouse = 'compute_warehouse'
   default_role = transform
