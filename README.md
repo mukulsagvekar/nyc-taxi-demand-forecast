@@ -69,11 +69,17 @@ As the frequency of data is monthly, Snowpipe is not used, instead a copy comman
 
 * Data is first flatten and stored into curated layer in trips_flatten table
 <img width="1649" height="475" alt="image" src="https://github.com/user-attachments/assets/9d439a25-4e59-4dfe-8679-748968e53149" />
+
 * Then data is cleaned (remove invalid records) and only required columns are taken, and stored in trips_cleaned table.
+
 <img width="1232" height="471" alt="image" src="https://github.com/user-attachments/assets/4fb257a0-e1ab-4156-a036-e3a80b645ff0" />
+
 * This cleaned data is then aggregated and transformed into time series data and stored in Analytics Layer. During this transformation, the missing timestamps are filled by creating a grid of zone x timestamps for the whole data range and cross joined with the cleaned data so it fills the missed timestamps per zone.
+
 <img width="1649" height="469" alt="image" src="https://github.com/user-attachments/assets/a28f4d67-f5d0-4ceb-9c93-edb2ccfd4321" />
+
 * Then the feaetures such as time features(hour, day, dayofweek, month, quarter, year. dayofyear, is_holiday), lag features (lag_1, lag_24, lag_168), and rolling features (rolling_avg_24h, rolling_avg_7d, rolling_std_24h) are extracted to find short-term trends, daily seasonality, and weekly patterns.
+  
 <img width="1648" height="476" alt="image" src="https://github.com/user-attachments/assets/89f9430f-5649-4757-9c12-b04e26b15302" />
 
 ## ML Model
