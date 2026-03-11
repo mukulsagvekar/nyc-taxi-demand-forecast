@@ -26,7 +26,7 @@ Dashboard link -  https://nyc-taxi-demand-forecast-happzg759c7qzkbmfvruuyf.strea
 
 ## Architecture
 
-
+<img width="1118" height="532" alt="image" src="https://github.com/user-attachments/assets/ab521aad-197f-4273-98d1-4516c33c2288" />
 
 ## Project Objectives
 
