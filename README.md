@@ -1,6 +1,6 @@
 # NYC Taxi Demand Forecasting
 
-### Project Overview:
+## Project Overview:
 
 This project builds an end-to-end data engineering and machine learning pipeline to forecast taxi demand across New York City zones.
 
@@ -16,4 +16,28 @@ The goal of the project is to demonstrate production-style workflows involving:
 
 Dashboard link -  https://nyc-taxi-demand-forecast-happzg759c7qzkbmfvruuyf.streamlit.app/
 
+## Tech Stack:
 
+* Cloud and Tools - AWS Lambda, AWS S3, Snowflake, dbt
+* Languages and Libraries - SQL, Python, Snowpark, Pandas, Plotly
+* ML Model - LightGBM, XGBoost
+* Visualization - Streamlit
+* Deployment - Streamlit Community Cloud, Github 
+
+## Architecture
+
+
+
+## Project Objectives
+
+## Dataset
+
+## Data Pipeline
+
+## ML Model
+
+## Forecasting Strategy
+
+## Future Improvements
+
+## Example Use Cases
