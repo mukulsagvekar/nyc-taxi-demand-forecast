@@ -7,12 +7,13 @@ This project builds an end-to-end data engineering and machine learning pipeline
 The pipeline ingests historical taxi trip data, transforms it into time-series features, trains forecasting models and display predictions through an interactive dashboard.
 
 The goal of the project is to demonstrate production-style workflows involving:
-<b> Data Engineering
-Feature Engineering
-Time Series Forecasting
-Machine Learning in the Data Warehouse
-Interactive Data Visualization
-The system forecasts hourly taxi demand for each NYC taxi zone and allows users to explore predictions through a live dashboard.
+* Data Engineering
+* Feature Engineering
+* Time Series Forecasting
+* Machine Learning in the Data Warehouse
+* Interactive Data Visualization
+* The system forecasts hourly taxi demand for each NYC taxi zone and allows users to explore predictions through a live dashboard.
+
+Dashboard link -  https://nyc-taxi-demand-forecast-happzg759c7qzkbmfvruuyf.streamlit.app/
 
 
-https://nyc-taxi-demand-forecast-happzg759c7qzkbmfvruuyf.streamlit.app/
