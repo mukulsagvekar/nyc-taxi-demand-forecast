@@ -89,7 +89,7 @@ While training the model, LightGBM performed beetter for this panel time series 
 
 Below is the importance give to features by this model
 
-<img width="740" height="709" alt="image" src="https://github.com/user-attachments/assets/88366fbe-5c9b-4577-85c9-8948f2e750d6" />
+<img width="440" height="409" alt="image" src="https://github.com/user-attachments/assets/88366fbe-5c9b-4577-85c9-8948f2e750d6" />
 
 
 
