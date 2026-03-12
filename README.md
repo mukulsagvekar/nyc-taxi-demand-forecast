@@ -84,8 +84,58 @@ As the frequency of data is monthly, Snowpipe is not used, instead a copy comman
 
 ## ML Model
 
+The forecasting model used in this project is LightGBM, a gradient boosting framework designed for efficient machine learning.
+While training the model, LightGBM performed beetter for this panel time series data, it handled zone_id better - understanding the timeseries patter according to zones. 
+
+Below is the importance give to features by this model
+
+<img width="740" height="709" alt="image" src="https://github.com/user-attachments/assets/88366fbe-5c9b-4577-85c9-8948f2e750d6" />
+
+
+
+Thee model selection and training is this notebook - https://github.com/mukulsagvekar/nyc-taxi-demand-forecast/blob/main/nyctaxi_demand_forecasting.ipynb
+
 ## Forecasting Strategy
+
+The future demand is predicted using recursive forecasting. As for the future we do not have time, lag and rolling features.
+Steps:
+1. Use latest observed demand values
+2. Predict next hour demand
+3. Append prediction to dataset
+4. Generate new lag features
+5. Predict next hour again
+
+This continues for 168 hours (7 days)
+
+## Dashboard
+
+Forecasted data is stored in snowflake table. The predictions are visualized using Streamlit.
+
+The dashboard allows users to:
+* View taxi demand trends
+* Explore forecasts by zone
+* Visualize geographic demand heatmaps
+* Filter demand by time range
+
+Features include:
+* Interactive zone filters
+* Demand trend charts
+* Geographic heatmaps of NYC taxi zones
 
 ## Future Improvements
 
+Possible improvements include:
+* Real-time data ingestion
+* Automated model retraining
+* Deep learning models for time series
+* Anomaly detection for abnormal demand spikes
+* Event-aware forecasting (weather, holidays)
+
 ## Example Use Cases
+
+This system could be used for:
+* Taxi fleet demand planning
+* Ride-sharing optimization
+* City transportation planning
+* Urban mobility analytics
+
