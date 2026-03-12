@@ -85,7 +85,7 @@ As the frequency of data is monthly, Snowpipe is not used, instead a copy comman
 ## ML Model
 
 The forecasting model used in this project is LightGBM, a gradient boosting framework designed for efficient machine learning.
-While training the model, LightGBM performed beetter for this panel time series data, it handled zone_id better - understanding the timeseries patter according to zones. 
+While training the model, LightGBM performed better for this panel time series data, it handled zone_id better - understanding the timeseries patter according to zones. 
 
 Below is the importance give to features by this model
 
@@ -93,7 +93,7 @@ Below is the importance give to features by this model
 
 
 
-Thee model selection and training is this notebook - https://github.com/mukulsagvekar/nyc-taxi-demand-forecast/blob/main/nyctaxi_demand_forecasting.ipynb
+The model selection and training is this notebook - https://github.com/mukulsagvekar/nyc-taxi-demand-forecast/blob/main/nyctaxi_demand_forecasting.ipynb
 
 ## Forecasting Strategy
 
