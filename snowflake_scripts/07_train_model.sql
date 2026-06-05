@@ -184,3 +184,18 @@ call nyctaxi.feature_store.forecast_7d();
 select * from NYCTAXI.FEATURE_STORE.ZONE_HOURLY_FORECAST where zone_id = 100;
 
 select max(pickup_datetime) from nyctaxi.feature_store.train_data ;--2025-11-23 23:00:00.000
+
+
+select * from NYCTAXI.RAW.TAXI_ZONE_LOOKUP;
+
+select * from NYCTAXI.FEATURE_STORE.ZONE_HOURLY_FORECAST;
+
+select zone_id, avg(trip_count) from NYCTAXI.ANALYTICS.FACT_TRIP_HOURLY group by zone_id;
+
+SELECT AVG(trip_count) 
+FROM NYCTAXI.ANALYTICS.FACT_TRIP_HOURLY;
+
+select count(*) from NYCTAXI.RAW.TRIPS limit 10; -- 85587316
+
+select max(pickup_datetime) from NYCTAXI.FEATURE_STORE.HOURLY_FEATURES limit 10;
+select * from NYCTAXI.FEATURE_STORE.ZONE_HOURLY_FORECAST limit 10;--44184

@@ -10,8 +10,8 @@ grant operate on warehouse compute_wh to role transform;
 
 -- 4. create dbt user and assign to transform role
 create user if not exists dbt
-  password = ''
-  login_name = ''
+  password = 'dbt@6598'
+  login_name = 'dbt'
   must_change_password = false
   default_warehouse = 'compute_warehouse'
   default_role = transform
@@ -37,6 +37,10 @@ grant all on future tables in schema nyctaxi.raw to role transform;
 grant all on stage nyctaxi.raw.nyctaxi_stage to role transform;
 
 grant all on file format nyctaxi.raw.parquet_ff to role transform;
+
+grant all on table NYCTAXI.FEATURE_STORE.ZONE_HOURLY_FORECAST to role transform;
+
+
 
 
 

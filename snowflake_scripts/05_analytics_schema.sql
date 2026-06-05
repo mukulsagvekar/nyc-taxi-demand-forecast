@@ -192,3 +192,7 @@ with t as (
 select * from t ;
 
 -- drop table nyctaxi.analytics.fact_trip_hourly;*/
+
+select count(*) from nyctaxi.curated.trips_cleaned limit 10;
+select * from nyctaxi.feature_store.hourly_features limit 10;
+
