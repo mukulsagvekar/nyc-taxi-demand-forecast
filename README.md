@@ -1,4 +1,4 @@
-# NYC Taxi Demand Forecasting
+# MobilityIQ — Taxi Demand Forecasting & Analytics Platform
 
 ## Project Overview
 
@@ -6,13 +6,16 @@ This project builds an end-to-end data engineering and machine learning pipeline
 
 The pipeline ingests historical taxi trip data, transforms it into time-series features, trains forecasting models and display predictions through an interactive dashboard.
 
+The platform has since been extended with a governed semantic layer (Snowflake Cortex Analyst) so users can query demand, revenue, and seasonality data in plain English — turning the forecasting pipeline into a self-service analytics platform.
+
 The goal of the project is to demonstrate production-style workflows involving:
 * Data Engineering
 * Feature Engineering
 * Time Series Forecasting
 * Machine Learning in the Data Warehouse
+* Semantic Layer & Natural Language Analytics
 * Interactive Data Visualization
-* The system forecasts hourly taxi demand for each NYC taxi zone and allows users to explore predictions through a live dashboard.
+* The system forecasts hourly taxi demand for each NYC taxi zone and allows users to explore predictions through a live dashboard, or ask questions about demand, revenue, and seasonality directly in plain English.
 
 Dashboard link -  https://nyc-taxi-demand-forecast-happzg759c7qzkbmfvruuyf.streamlit.app/
 
@@ -21,6 +24,7 @@ Dashboard link -  https://nyc-taxi-demand-forecast-happzg759c7qzkbmfvruuyf.strea
 * Cloud and Tools - AWS Lambda, AWS S3, Snowflake, dbt
 * Languages and Libraries - SQL, Python, Snowpark, Pandas, Plotly
 * ML Model - LightGBM, XGBoost
+* Semantic Layer / NL Query - Snowflake Cortex Analyst
 * Visualization - Streamlit
 * Deployment - Streamlit Community Cloud, Github 
 
@@ -28,9 +32,11 @@ Dashboard link -  https://nyc-taxi-demand-forecast-happzg759c7qzkbmfvruuyf.strea
 
 <img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/c9fa4f0d-3972-45a7-93ee-d7efa6161c80" />
 
+Note: this diagram reflects the core forecasting pipeline. See the "Semantic Layer & Natural Language Analytics" section below for the analytics layer built on top of it.
+
 ## Project Objectives
 
-To build an end-to-end Data and ML pipeline using modern tech stack, to forecast 7-day hourly taxi demand across NYC zones.
+To build an end-to-end Data and ML pipeline using modern tech stack, to forecast 7-day hourly taxi demand across NYC zones, and to expose that data — along with historical revenue and seasonality patterns — through a governed semantic layer that supports both BI dashboards and natural language queries.
 
 ## Dataset
 
@@ -82,6 +88,37 @@ As the frequency of data is monthly, Snowpipe is not used, instead a copy comman
   
 <img width="1648" height="476" alt="image" src="https://github.com/user-attachments/assets/89f9430f-5649-4757-9c12-b04e26b15302" />
 
+## Semantic Layer & Natural Language Analytics
+
+On top of the curated Snowflake tables, a semantic layer was added using Snowflake Cortex Analyst, so business users can ask questions in plain English without writing SQL.
+
+### Why
+
+The original dashboard answered one question well: "what's forecasted demand by zone?" Real analytics use cases need more — revenue, fares, seasonality — and hardcoding a new SQL query for every new question doesn't scale. A semantic layer defines what each metric means once, in one governed place, so both the dashboard and the AI chat agree on the same numbers.
+
+### What was built
+
+* Three dbt marts purpose-built for the semantic layer, each joined to a zone/borough lookup table:
+  * `mart_demand_forecast` — forecasted demand by zone, borough, and hour
+  * `mart_trip_facts` — historical trip-level revenue, fare, tip, and distance
+  * `mart_demand_seasonality` — holiday lift, weekend/weekday patterns, and precomputed rolling 24h/7d averages
+* A Cortex Analyst semantic model YAML, staged in Snowflake, defining dimensions, measures, and verified example queries for each mart
+* An "Ask MobilityIQ" chat interface built into the Streamlit app, calling the Cortex Analyst REST API, with the auto-generated SQL shown for transparency and results auto-charted where applicable
+
+### Example questions
+
+* "What's the average fare in Manhattan vs Queens?"
+* "Is demand higher on holidays vs regular days?"
+* "Which zone generates the most revenue per trip?"
+* "Which boroughs have the highest average forecasted taxi demand?"
+
+### Known limitations (by design)
+
+* No forecast-accuracy metrics (MAE/MAPE) — actuals aren't yet stored alongside predictions, so accuracy can't be calculated against this schema
+* No anomaly detection — rolling standard deviation is computed but not yet surfaced as an alert or flag
+* No driver/vehicle-level questions — not present in the source data
+* No real-time questions — the pipeline is monthly batch, not streaming
+
 ## ML Model
 
 The forecasting model used in this project is LightGBM, a gradient boosting framework designed for efficient machine learning.
@@ -116,11 +153,13 @@ The dashboard allows users to:
 * Explore forecasts by zone
 * Visualize geographic demand heatmaps
 * Filter demand by time range
+* Ask questions in plain English via the "Ask MobilityIQ" chat panel, powered by Snowflake Cortex Analyst
 
 Features include:
 * Interactive zone filters
 * Demand trend charts
 * Geographic heatmaps of NYC taxi zones
+* Natural language Q&A over demand, revenue, and seasonality data, with generated SQL shown for transparency
 
 ## Future Improvements
 
@@ -130,6 +169,8 @@ Possible improvements include:
 * Deep learning models for time series
 * Anomaly detection for abnormal demand spikes
 * Event-aware forecasting (weather, holidays)
+* Store actuals alongside forecasts to enable forecast-accuracy tracking (MAE/MAPE, bias)
+* Expand the semantic layer with anomaly-flagging measures
 
 ## Example Use Cases
 
@@ -138,4 +179,4 @@ This system could be used for:
 * Ride-sharing optimization
 * City transportation planning
 * Urban mobility analytics
-
+* Self-service revenue and seasonality analysis for non-technical stakeholders

@@ -13,7 +13,7 @@ with t as(
         data:fare_amount::number(20,2) as fare_amount,
         data:extra::number(20,2) as extra,
         data:mta_tax::number(20,2) as mta_tax,
-        data:tip_amount::number(20,2) as trip_amount,
+        data:tip_amount::number(20,2) as tip_amount,
         data:tolls_amount::number(20,2) as tolls_amount,
         data:improvement_surcharge::number(20,2) as improvement_surcharge,
         data:total_amount::number(20,2) as total_amount,

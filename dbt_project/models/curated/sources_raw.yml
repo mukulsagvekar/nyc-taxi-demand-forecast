@@ -1,9 +1,18 @@
 version: 2
-
+ 
 sources:
   - name: raw
     database: nyctaxi
     schema: raw
     tables:
       - name: trips
-        description: "This table contains raw trip data as a variant"
+        description: "Raw trip data as a variant"
+      - name: taxi_zone_lookup
+        description: "Zone ID to zone name and borough lookup"
+ 
+  - name: feature_store
+    database: nyctaxi
+    schema: feature_store
+    tables:
+      - name: zone_hourly_forecast
+        description: "LightGBM model output: predicted trip_count per zone per hour"

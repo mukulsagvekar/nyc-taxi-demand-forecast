@@ -4,6 +4,7 @@ with t as(
         DATE_TRUNC('hour', pickup_datetime) AS pickup_hour,
         trip_distance,
         fare_amount,
+        tip_amount,
         total_amount,
         load_timestamp,
         to_timestamp_ntz(current_timestamp) as update_timestamp

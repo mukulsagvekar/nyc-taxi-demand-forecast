@@ -1,0 +1,332 @@
+name: mobilityiq_semantic_model
+description: >
+  Semantic model for MobilityIQ, the NYC taxi demand forecasting and
+  analytics platform. Covers forecasted zone-level demand, historical trip
+  revenue/fare facts, and calendar-aware seasonality (holiday lift,
+  day-of-week patterns, rolling trend). Excludes forecast-accuracy metrics
+  (no actuals stored alongside predictions), anomaly detection,
+  driver/vehicle-level data, and real-time demand. Used by the
+  "Ask MobilityIQ" chat feature in the Streamlit app.
+
+tables:
+
+  # ---------------------------------------------------------------
+  # Table 1: Forecasted demand
+  # ---------------------------------------------------------------
+  - name: demand_forecast
+    description: >
+      Forecasted taxi demand (predicted trip count) per zone per hour,
+      produced by the LightGBM model. Use for any question about future
+      or predicted demand, peak hours, or zone/borough demand ranking.
+    base_table:
+      database: NYCTAXI
+      schema: ANALYTICS
+      table: MART_DEMAND_FORECAST
+
+    dimensions:
+      - name: zone_id
+        expr: ZONE_ID
+        data_type: NUMBER
+        description: Numeric taxi zone identifier (matches NYC TLC LocationID).
+
+      - name: zone_name
+        expr: ZONE_NAME
+        data_type: VARCHAR
+        description: Human-readable taxi zone name.
+        sample_values:
+          - "JFK Airport"
+          - "Times Sq/Theatre District"
+          - "Upper East Side South"
+
+      - name: borough
+        expr: BOROUGH
+        data_type: VARCHAR
+        description: NYC borough the zone belongs to.
+        sample_values:
+          - "Manhattan"
+          - "Brooklyn"
+          - "Queens"
+          - "Bronx"
+          - "Staten Island"
+
+      - name: forecast_hour
+        expr: FORECAST_HOUR
+        data_type: NUMBER
+        description: Hour of day (0-23) for the forecasted value.
+
+      - name: forecast_dayofweek
+        expr: FORECAST_DAYOFWEEK
+        data_type: NUMBER
+        description: Day of week for the forecast (0=Sunday ... 6=Saturday).
+
+    time_dimensions:
+      - name: forecast_datetime
+        expr: FORECAST_DATETIME
+        data_type: TIMESTAMP_NTZ
+        description: Exact timestamp the forecast applies to.
+
+      - name: forecast_date
+        expr: FORECAST_DATE
+        data_type: DATE
+        description: Calendar date the forecast applies to.
+
+    measures:
+      - name: predicted_demand
+        expr: PREDICTED_DEMAND
+        data_type: NUMBER
+        default_aggregation: sum
+        description: >
+          Forecasted number of trips. Use SUM for total demand over a period,
+          AVG for average hourly demand, MAX to find peak demand.
+
+  # ---------------------------------------------------------------
+  # Table 2: Historical trip revenue/fare facts
+  # ---------------------------------------------------------------
+  - name: trip_facts
+    description: >
+      Trip-level historical facts including fare, tip, distance, and total
+      revenue. Use for any question about actual historical trip volume,
+      revenue, fares, tips, or trip distance.
+    base_table:
+      database: NYCTAXI
+      schema: ANALYTICS
+      table: MART_TRIP_FACTS
+
+    dimensions:
+      - name: zone_id
+        expr: ZONE_ID
+        data_type: NUMBER
+        description: Numeric taxi zone identifier (matches NYC TLC LocationID).
+
+      - name: zone_name
+        expr: ZONE_NAME
+        data_type: VARCHAR
+        description: Human-readable taxi zone name.
+
+      - name: borough
+        expr: BOROUGH
+        data_type: VARCHAR
+        description: NYC borough the zone belongs to.
+        sample_values:
+          - "Manhattan"
+          - "Brooklyn"
+          - "Queens"
+          - "Bronx"
+          - "Staten Island"
+
+      - name: pickup_hour_of_day
+        expr: PICKUP_HOUR_OF_DAY
+        data_type: NUMBER
+        description: Hour of day (0-23) the trip was picked up.
+
+      - name: pickup_dayofweek
+        expr: PICKUP_DAYOFWEEK
+        data_type: NUMBER
+        description: Day of week of pickup (0=Sunday ... 6=Saturday).
+
+    time_dimensions:
+      - name: pickup_hour
+        expr: PICKUP_HOUR
+        data_type: TIMESTAMP_NTZ
+        description: Pickup timestamp truncated to the hour.
+
+      - name: pickup_date
+        expr: PICKUP_DATE
+        data_type: DATE
+        description: Calendar date of pickup.
+
+    measures:
+      - name: trip_count
+        expr: "1"
+        data_type: NUMBER
+        default_aggregation: count
+        description: Number of trips. Use COUNT for total historical trip volume.
+
+      - name: trip_distance
+        expr: TRIP_DISTANCE
+        data_type: NUMBER
+        default_aggregation: avg
+        description: Trip distance in miles. Use AVG for average trip distance.
+
+      - name: fare_amount
+        expr: FARE_AMOUNT
+        data_type: NUMBER
+        default_aggregation: sum
+        description: Base fare amount in USD, before tip/tolls/surcharges.
+
+      - name: tip_amount
+        expr: TIP_AMOUNT
+        data_type: NUMBER
+        default_aggregation: sum
+        description: Tip amount in USD.
+
+      - name: total_amount
+        expr: TOTAL_AMOUNT
+        data_type: NUMBER
+        default_aggregation: sum
+        description: >
+          Total amount charged in USD, including fare, tip, tolls, and
+          surcharges. Use SUM for total revenue, AVG for revenue per trip.
+
+      - name: revenue_per_mile
+        expr: REVENUE_PER_MILE
+        data_type: NUMBER
+        default_aggregation: avg
+        description: Total amount divided by trip distance, per trip.
+
+      - name: tip_rate
+        expr: TIP_RATE
+        data_type: NUMBER
+        default_aggregation: avg
+        description: Tip amount as a fraction of fare amount, per trip.
+
+  # ---------------------------------------------------------------
+  # Table 3: Seasonality / calendar-aware demand
+  # ---------------------------------------------------------------
+  - name: demand_seasonality
+    description: >
+      Hourly demand with calendar context: holiday flag, weekend flag,
+      and precomputed rolling averages. Use for questions about holiday
+      lift, day-of-week or weekend patterns, and short-term demand trend.
+      Do not use for forecast accuracy - this table has no predicted vs
+      actual comparison.
+    base_table:
+      database: NYCTAXI
+      schema: ANALYTICS
+      table: MART_DEMAND_SEASONALITY
+
+    dimensions:
+      - name: zone_id
+        expr: ZONE_ID
+        data_type: NUMBER
+        description: Numeric taxi zone identifier (matches NYC TLC LocationID).
+
+      - name: zone_name
+        expr: ZONE_NAME
+        data_type: VARCHAR
+        description: Human-readable taxi zone name.
+
+      - name: borough
+        expr: BOROUGH
+        data_type: VARCHAR
+        description: NYC borough the zone belongs to.
+
+      - name: hour
+        expr: HOUR
+        data_type: NUMBER
+        description: Hour of day (0-23).
+
+      - name: dayofweek
+        expr: DAYOFWEEK
+        data_type: NUMBER
+        description: Day of week (0=Sunday ... 6=Saturday).
+
+      - name: is_weekend
+        expr: IS_WEEKEND
+        data_type: BOOLEAN
+        description: True if the date falls on Saturday or Sunday.
+
+      - name: is_holiday
+        expr: IS_HOLIDAY
+        data_type: NUMBER
+        description: 1 if this date is a recognized city holiday, else 0.
+
+    time_dimensions:
+      - name: pickup_datetime
+        expr: PICKUP_DATETIME
+        data_type: TIMESTAMP_NTZ
+        description: Hourly timestamp this row represents.
+
+    measures:
+      - name: trip_count
+        expr: TRIP_COUNT
+        data_type: NUMBER
+        default_aggregation: sum
+        description: Actual historical trip count for this zone and hour.
+
+      - name: rolling_avg_24h
+        expr: ROLLING_AVG_24H
+        data_type: NUMBER
+        default_aggregation: avg
+        description: >
+          Precomputed trailing 24-hour average trip count for this zone,
+          as of this hour. Already calculated upstream - do not re-average.
+
+      - name: rolling_avg_7d
+        expr: ROLLING_AVG_7D
+        data_type: NUMBER
+        default_aggregation: avg
+        description: >
+          Precomputed trailing 7-day (168-hour) average trip count for
+          this zone, as of this hour. Already calculated upstream.
+
+      - name: rolling_std_24h
+        expr: ROLLING_STD_24H
+        data_type: NUMBER
+        default_aggregation: avg
+        description: Precomputed trailing 24-hour standard deviation of trip count.
+
+# ---------------------------------------------------------------
+# Verified example questions - calibrates Cortex's SQL generation.
+# Test these first after staging the YAML.
+# ---------------------------------------------------------------
+verified_queries:
+
+  - name: highest_forecasted_demand_zones_this_week
+    question: "Which zones have the highest forecasted demand this week?"
+    sql: >
+      SELECT zone_name, borough, SUM(predicted_demand) AS total_predicted_demand
+      FROM demand_forecast
+      WHERE forecast_date BETWEEN CURRENT_DATE() AND DATEADD('day', 7, CURRENT_DATE())
+      GROUP BY zone_name, borough
+      ORDER BY total_predicted_demand DESC
+      LIMIT 10
+
+  - name: compare_borough_forecasted_demand
+    question: "Compare forecasted demand between Manhattan and Brooklyn"
+    sql: >
+      SELECT borough, SUM(predicted_demand) AS total_predicted_demand
+      FROM demand_forecast
+      WHERE borough IN ('Manhattan', 'Brooklyn')
+      GROUP BY borough
+
+  - name: peak_demand_hour_for_zone
+    question: "Which hour of day has peak forecasted demand in JFK Airport?"
+    sql: >
+      SELECT forecast_hour, AVG(predicted_demand) AS avg_predicted_demand
+      FROM demand_forecast
+      WHERE zone_name = 'JFK Airport'
+      GROUP BY forecast_hour
+      ORDER BY avg_predicted_demand DESC
+      LIMIT 1
+
+  - name: average_fare_by_borough
+    question: "What's the average fare in Manhattan vs Queens?"
+    sql: >
+      SELECT borough, AVG(fare_amount) AS avg_fare
+      FROM trip_facts
+      WHERE borough IN ('Manhattan', 'Queens')
+      GROUP BY borough
+
+  - name: top_revenue_per_trip_zone
+    question: "Which zone generates the most revenue per trip?"
+    sql: >
+      SELECT zone_name, borough, AVG(total_amount) AS avg_revenue_per_trip
+      FROM trip_facts
+      GROUP BY zone_name, borough
+      ORDER BY avg_revenue_per_trip DESC
+      LIMIT 10
+
+  - name: holiday_demand_lift
+    question: "Is demand higher on holidays vs regular days?"
+    sql: >
+      SELECT is_holiday, AVG(trip_count) AS avg_trip_count
+      FROM demand_seasonality
+      GROUP BY is_holiday
+
+  - name: weekend_vs_weekday_demand
+    question: "How does demand on weekends compare to weekdays?"
+    sql: >
+      SELECT is_weekend, AVG(trip_count) AS avg_trip_count
+      FROM demand_seasonality
+      GROUP BY is_weekend
